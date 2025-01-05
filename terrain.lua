@@ -6,7 +6,7 @@ function Terrain.new(gridSize, cellSize, heightScale)
     local terrain = {
         gridSize = gridSize or 32,
         cellSize = cellSize or 32,
-        heightScale = 10,  -- Keep your lower height scale
+        heightScale = heightScale or 10,
         
         -- Camera position (in world space)
         camera = {
@@ -14,21 +14,14 @@ function Terrain.new(gridSize, cellSize, heightScale)
             y = 0,
             height = 100,
             zoom = 1,
-            rotation = 0
+            rotation = 0,
+            tilt = 0.6  -- lower values for more tilt
         }
     }
     setmetatable(terrain, Terrain)
-    
-    -- Generate heightmap
-    terrain.heights = {}
-    for x = 1, terrain.gridSize do
-        terrain.heights[x] = {}
-        for y = 1, terrain.gridSize do
-            local height = math.sin(x/2) * math.cos(y/2) * terrain.heightScale
-            height = height + math.sin(x/4 + y/4) * terrain.heightScale * 0.5
-            terrain.heights[x][y] = height
-        end
-    end
+
+    -- Load heightmap from image
+    terrain:loadHeightmap("heightmap.png")
     
     return terrain
 end
@@ -89,6 +82,31 @@ function Terrain:createMesh(texture)
     mesh:setVertexMap(indices)
     
     return mesh
+end
+
+function Terrain:loadHeightmap(imagePath)
+    local imageData = love.image.newImageData(imagePath)
+    local imgWidth, imgHeight = imageData:getDimensions()
+
+    -- Initialize heights table
+    self.heights = {}
+
+    -- Loop through the grid
+    for x = 1, self.gridSize do
+        self.heights[x] = {}
+        for y = 1, self.gridSize do
+            -- Map terrain grid coordinates to image pixel coordinates
+            local imgX = math.floor((x - 1) / (self.gridSize - 1) * (imgWidth - 1))
+            local imgY = math.floor((y - 1) / (self.gridSize - 1) * (imgHeight - 1))
+
+            -- Get pixel intensity (assuming grayscale image)
+            local r, g, b = imageData:getPixel(imgX, imgY)
+            local intensity = (r + g + b) / 3  -- Average RGB values for grayscale
+
+            -- Scale intensity to terrain height
+            self.heights[x][y] = intensity * self.heightScale
+        end
+    end
 end
 
 function Terrain:moveCamera(dx, dy)

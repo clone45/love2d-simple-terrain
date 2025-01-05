@@ -11,6 +11,7 @@ local vertexCode = [[
     uniform float cameraZoom;
     uniform vec2 screenSize;
     uniform float cameraRotation;
+    uniform float cameraTilt;
     
     varying float v_height;
     
@@ -36,11 +37,13 @@ local vertexCode = [[
         v_height = worldY;
 
         // Apply terrain tilt
-        float tiltedY = worldY * cos(ROTATION) - rotatedZ * sin(ROTATION);
-        float tiltedZ = worldY * sin(ROTATION) + rotatedZ * cos(ROTATION);
+        // float tiltedY = worldY * cos(ROTATION) - rotatedZ * sin(ROTATION);
+        // float tiltedZ = worldY * sin(ROTATION) + rotatedZ * cos(ROTATION);
+        float tiltedY = worldY * cos(cameraTilt) - rotatedZ * sin(cameraTilt);
+        float tiltedZ = worldY * sin(cameraTilt) + rotatedZ * cos(cameraTilt);
         
         // Perspective effect
-        float perspective = 1.0 - (tiltedZ * 0.001);
+        float perspective = 1.0 / (1.0 + tiltedZ * 0.0005);
         float finalX = rotatedX * perspective;
         float finalY = tiltedY * perspective;
 

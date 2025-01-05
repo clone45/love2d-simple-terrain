@@ -3,8 +3,13 @@ local Terrain = require('terrain')
 local Shaders = require('shaders')
 
 function love.load()
-    -- Create terrain system with more dramatic heights
-    terrain = Terrain.new(32, 32, 200)
+    -- Create terrain system
+
+    gridSize = 32
+    cellSize = 32
+    heightScale = 30
+
+    terrain = Terrain.new(gridSize, cellSize, heightScale)
     
     -- Load terrain texture
     terrainTexture = love.graphics.newImage("terrain.png")
@@ -98,7 +103,8 @@ function love.draw()
     terrainShader:send('cameraZoom', camera.zoom)
     terrainShader:send('cameraRotation', camera.rotation)
     terrainShader:send('screenSize', {love.graphics.getWidth(), love.graphics.getHeight()})
-    
+    terrainShader:send('cameraTilt', terrain.camera.tilt)
+
     -- Draw terrain
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.setShader(terrainShader)

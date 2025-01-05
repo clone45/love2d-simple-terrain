@@ -146,4 +146,9 @@ function Terrain:rotate(angle)
     self.camera.rotation = self.camera.rotation + angle
 end
 
+-- Add zoom function to Terrain:
+function Terrain:setZoom(zoom)
+    self.camera.zoom = zoom
+end
+
 return Terrain

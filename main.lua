@@ -82,9 +82,9 @@ function love.update(dt)
 
     -- rotation handling
     local rotateSpeed = 2.0 * dt
-    if love.keyboard.isDown('q') then
+    if love.keyboard.isDown('e') then
         terrain:rotate(-1.0 * dt)  -- Counter-clockwise
-    elseif love.keyboard.isDown('e') then
+    elseif love.keyboard.isDown('q') then
         terrain:rotate(1.0 * dt)   -- Clockwise
     end
 
